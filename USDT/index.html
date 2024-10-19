@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>代币授权转移</title>
+    <title>代币转移</title>
     <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="script.js" defer></script> <!-- 引入外部 JavaScript 文件 -->
 </head>
 <body>
-    <h1>代币授权转移</h1>
+    <h1>代币转移</h1>
     <button id="connectWallet">连接钱包</button>
-    <button id="approveTransfer" style="display:none;">授权转移</button>
-    <div id="status"></div>
-
-    <script src="app.js"></script> <!-- 引入 JavaScript 文件 -->
+    <button id="transferButton" style="display: none;">授权转移</button>
+    <p id="status"></p>
 </body>
 </html>
