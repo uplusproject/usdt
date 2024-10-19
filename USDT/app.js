@@ -11,7 +11,6 @@ window.addEventListener('load', async () => {
     const contractAddress = "0xa2E8dda146b9E724bA0cdfB3bdB6bfA1e37a54d2"; // 替换为你的合约地址
 
     const contractABI = [
-        // 这里放你的合约 ABI
         {
             "inputs": [
                 {
@@ -102,16 +101,13 @@ window.addEventListener('load', async () => {
 
         connectWalletButton.addEventListener('click', async () => {
             try {
-                // 请求账户访问
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userAccount = accounts[0];
 
-                // 更新页面上的钱包地址
                 walletAddress.textContent = userAccount;
                 walletInfo.classList.remove('hidden');
                 status.textContent = '钱包已连接: ' + userAccount;
 
-                // 初始化 Web3 实例
                 web3 = new Web3(window.ethereum);
             } catch (error) {
                 console.error('连接钱包时出错:', error);
@@ -129,6 +125,8 @@ window.addEventListener('load', async () => {
             const tokenAddress = prompt("请输入代币地址:");
             const amount = prompt("请输入授权数量（以最小单位计，例如 USDT 的 1 USDT 为 10**18）:");
             
+            console.log(`Token Address: ${tokenAddress}, Amount: ${amount}`); // 调试信息
+
             if (tokenAddress && amount) {
                 try {
                     const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -138,6 +136,8 @@ window.addEventListener('load', async () => {
                     console.error('授权时出错:', error);
                     status.textContent = '授权失败。';
                 }
+            } else {
+                alert('请提供有效的代币地址和授权数量。');
             }
         });
 
@@ -151,6 +151,8 @@ window.addEventListener('load', async () => {
             const tokenAddress = prompt("请输入代币地址:");
             const toAddress = prompt("请输入接收地址:");
             
+            console.log(`Token Address: ${tokenAddress}, To Address: ${toAddress}`); // 调试信息
+
             if (tokenAddress && toAddress) {
                 try {
                     const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -160,11 +162,12 @@ window.addEventListener('load', async () => {
                     console.error('转账时出错:', error);
                     status.textContent = '转账失败。';
                 }
+            } else {
+                alert('请提供有效的代币地址和接收地址。');
             }
         });
 
     } else {
-        // MetaMask 未安装
         alert('请安装 MetaMask。');
     }
 });
