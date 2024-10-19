@@ -1,24 +1,30 @@
 window.addEventListener('load', async () => {
-    if (typeof window.ethereum !== 'undefined') {
-        console.log('MetaMask detected');
+    const connectWalletButton = document.getElementById('connectWallet');
+    const walletInfo = document.getElementById('walletInfo');
+    const walletAddress = document.getElementById('walletAddress');
+    const status = document.getElementById('status');
 
-        const connectWalletButton = document.getElementById('connectWallet');
+    // Check if MetaMask is installed
+    if (typeof window.ethereum !== 'undefined') {
+        console.log('MetaMask is installed!');
+
         connectWalletButton.addEventListener('click', async () => {
             try {
+                // Request account access
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const userAccount = accounts[0];
 
-                document.getElementById('walletAddress').textContent = userAccount;
-                document.getElementById('walletInfo').classList.remove('hidden');
-                document.getElementById('status').textContent = 'Connected: ' + userAccount;
-
-                console.log('Wallet connected:', userAccount);
+                // Update the wallet address on the page
+                walletAddress.textContent = userAccount;
+                walletInfo.classList.remove('hidden');
+                status.textContent = 'Wallet connected: ' + userAccount;
             } catch (error) {
                 console.error('Error connecting wallet:', error);
-                document.getElementById('status').textContent = 'Failed to connect wallet.';
+                status.textContent = 'Failed to connect wallet.';
             }
         });
     } else {
-        alert('MetaMask is not installed. Please install MetaMask to use this DApp.');
+        // MetaMask is not installed
+        alert('MetaMask is not installed. Please install MetaMask to use this feature.');
     }
 });
