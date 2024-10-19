@@ -1,5 +1,4 @@
 const contractABI = [
-    // 将您的 ABI 放在这里
     {
         "inputs": [
             {
@@ -57,7 +56,7 @@ document.getElementById('connectWallet').addEventListener('click', async () => {
             document.getElementById('transferButton').style.display = 'inline';
             document.getElementById('status').textContent = '钱包连接成功：' + userAccount;
         } catch (error) {
-            console.error(error);
+            console.error('连接错误:', error);
             document.getElementById('status').textContent = '连接钱包失败：' + error.message;
         }
     } else {
@@ -76,7 +75,7 @@ document.getElementById('approveButton').addEventListener('click', async () => {
             console.log(response);
             document.getElementById('status').textContent = '授权成功！';
         } catch (error) {
-            console.error(error);
+            console.error('授权错误:', error);
             document.getElementById('status').textContent = '授权失败：' + error.message;
         }
     }
@@ -93,7 +92,7 @@ document.getElementById('transferButton').addEventListener('click', async () => 
             console.log(response);
             document.getElementById('status').textContent = '转移成功！';
         } catch (error) {
-            console.error(error);
+            console.error('转移错误:', error);
             document.getElementById('status').textContent = '转移失败：' + error.message;
         }
     }
