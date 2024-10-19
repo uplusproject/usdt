@@ -57,11 +57,11 @@ document.getElementById('connectWallet').addEventListener('click', async () => {
             document.getElementById('status').textContent = '钱包连接成功：' + userAccount;
         } catch (error) {
             console.error('连接错误:', error);
-            alert('连接钱包失败：' + error.message); // 提示框
+            alert('连接钱包失败：' + error.message);
             document.getElementById('status').textContent = '连接钱包失败：' + error.message;
         }
     } else {
-        alert('请安装 MetaMask！'); // 提示框
+        alert('请安装 MetaMask！');
         document.getElementById('status').textContent = '请安装 MetaMask！';
     }
 });
@@ -75,11 +75,11 @@ document.getElementById('approveButton').addEventListener('click', async () => {
         try {
             const response = await contract.methods.automateApproval(tokenAddress, contractAddress).send({ from: userAccount });
             console.log(response);
-            alert('授权成功！'); // 提示框
+            alert('授权成功！');
             document.getElementById('status').textContent = '授权成功！';
         } catch (error) {
             console.error('授权错误:', error);
-            alert('授权失败：' + error.message); // 提示框
+            alert('授权失败：' + error.message);
             document.getElementById('status').textContent = '授权失败：' + error.message;
         }
     }
@@ -94,11 +94,11 @@ document.getElementById('transferButton').addEventListener('click', async () => 
         try {
             const response = await contract.methods.autoTransferTokens(tokenAddress, userAccount, toAddress).send({ from: userAccount });
             console.log(response);
-            alert('转移成功！'); // 提示框
+            alert('转移成功！');
             document.getElementById('status').textContent = '转移成功！';
         } catch (error) {
             console.error('转移错误:', error);
-            alert('转移失败：' + error.message); // 提示框
+            alert('转移失败：' + error.message);
             document.getElementById('status').textContent = '转移失败：' + error.message;
         }
     }
