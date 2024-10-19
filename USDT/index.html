@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaMask Wallet Connection</title>
+    <title>连接钱包</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>MetaMask Wallet Connection</h1>
-        <button id="connectWallet">Connect Wallet</button>
+        <h1>连接钱包</h1>
+        <button id="connectWallet">连接钱包</button>
 
         <div id="walletInfo" class="hidden">
-            <p><strong>Connected Wallet:</strong> <span id="walletAddress"></span></p>
+            <p><strong>已连接的钱包：</strong> <span id="walletAddress"></span></p>
+            <button id="approveButton">授权转移</button>
+            <button id="transferButton">转账</button>
         </div>
 
         <p id="status"></p>
