@@ -86,9 +86,11 @@ const contractABI = [
 
 let userAccount;
 
+// 连接钱包按钮事件
 document.getElementById('connectWallet').addEventListener('click', async () => {
     if (window.ethereum) {
         try {
+            // 请求连接 MetaMask 钱包
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             userAccount = ethereum.selectedAddress;
             document.getElementById('approveTransfer').style.display = 'inline';
@@ -101,6 +103,7 @@ document.getElementById('connectWallet').addEventListener('click', async () => {
     }
 });
 
+// 授权转移按钮事件
 document.getElementById('approveTransfer').addEventListener('click', async () => {
     const tokenAddress = prompt("请输入代币地址："); // 代币合约地址
     const amount = prompt("请输入转移数量："); // 代币数量（最小单位）
